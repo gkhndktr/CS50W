@@ -1,0 +1,55 @@
+{% extends "mail/layout.html" %}
+{% load static %}
+
+{% block body %}
+<h2>{{ request.user.email }}</h2>
+
+<button class="btn btn-sm btn-outline-primary" id="inbox">Inbox</button>
+<button class="btn btn-sm btn-outline-primary" id="compose">Compose</button>
+<button class="btn btn-sm btn-outline-primary" id="sent">Sent</button>
+<button class="btn btn-sm btn-outline-primary" id="archived">Archived</button>
+<a class="btn btn-sm btn-outline-primary" href="{% url 'logout' %}">Log Out</a>
+<hr>
+
+<div id="emails-view">
+
+</div>
+<div id="compose-view">
+    <h3 id="compose_header"></h3>
+    <form id="compose-form">
+        <div class="form-group">
+            From: <input disabled class="form-control" value="{{ request.user.email }}">
+        </div>
+
+        <div class="form-group">
+            To: <input class="form-control" id="compose-recipients">
+        </div>
+
+        <div class="form-group">
+            <input class="form-control" id="compose-subject" placeholder="Subject">
+        </div>
+
+        <textarea autofocus class="form-control" id="compose-body" placeholder="Body"></textarea>
+        
+        <input type="submit" class="btn btn-primary" id="send_email" value="Send"/>
+    </form>
+</div>
+
+<div id="content_body" style= display:none>
+
+    <div class="container border" id="info">
+        <div style="font-weight: bold; width:150px " class="float-left">From:</div><div id="mailFrom"></div>
+        <div style="font-weight: bold; width:150px" class="float-left">To:</div><div id="mailRecipients"></div>
+        <div style="font-weight: bold; width:150px" class="float-left">Subject:</div><div id="mailSubject"></div>
+        <div style="font-weight: bold; width:150px" class="float-left">Time:</div><div id="mailTimestamp"></div>
+       
+        <button id="reply_email"class="btn btn-sm btn-outline-primary">Reply</button>
+        <button id="archive_email" class="btn btn-sm btn-outline-primary"></button>
+    </div>
+    <div class="container border" style="min-height: 200px;"><p id="mailBody" ></p></div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'mail/inbox.js' %}"></script>
+{% endblock %}

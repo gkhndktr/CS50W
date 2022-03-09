@@ -1,0 +1,191 @@
+{% extends "auctions/layout.html" %}
+{% block body %}
+
+<h2>Listing Detail</h2>
+<br>
+{% if message %}
+    <div class="alert alert-success" role="alert">
+        {{ message }}
+    </div>
+{% endif %}
+
+<div class="container">
+    <div class="row ">
+        <div class="col-md-6 border ">
+
+            <div name="productMedia" style="position: relative;text-align: center;">
+                
+                {%if content.sold|stringformat:'s' == "True" %}
+                    {%if content.bidder|stringformat:'s' == username %}
+                    <img id="productPic" src="{{ content.imageUrl }}" style="height: 250px;opacity: 0.5;" class="img-thumbnail rounded">
+                    <div style="
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%) rotate(315deg);
+                    text-shadow : 1px 1px 5px #000000;
+                    font-size: 60px;
+                    color: red;
+                    ">WON
+                    </div>
+                    {%else%}
+                    <img id="productPic" src="{{ content.imageUrl }}" style="height: 250px; opacity: 0.5;" class="img-thumbnail rounded"> 
+                    <div style="
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%) rotate(315deg);
+                    text-shadow : 1px 1px 5px #000000;
+                    font-size: 60px;
+                    ">SOLD
+                    </div>
+                    {%endif%}
+                {%else%}
+                <img id="productPic" src="{{ content.imageUrl }}" style="height: 250px;" class="img-thumbnail rounded"> 
+                {%endif%}
+            </div>
+
+            <div name="definition" style="margin-top: 50px">
+                <div class="row ">
+                    <div class="col-4">
+                        Product Name: 
+                    </div>
+                    <div class="col-8">{{content.item}}</div>  
+                </div>
+                <div class="row ">
+                    <div class="col-4">
+                        Details:
+                    </div>
+                    <div class="col-8">{{content.definition}}</div> 
+                </div>
+                <br>
+                <div class="row ">
+                    <div class="col-4">
+                        Current Price:
+                    </div>
+                    <div class="col-8">{{content.price}}$</div> 
+                </div>
+                <div class="row ">
+                    <div class="col-4">
+                        Published by:
+                    </div>
+                    <div class="col-8">{{content.creator}}</div> 
+                </div>
+
+
+
+
+            </div>
+
+            <div name="bidActions" style="margin-top: 50px">
+                <!-- If the user is signed in and is the one who created the listing, the user should have the ability to “close” the auction from this page, which makes the highest bidder the winner of the auction and makes the listing no longer active. -->
+                {%if content.sold|stringformat:'s' == "True" %}
+                    <div>Product was sold for {{content.price}}$</div>
+                    {% if user.is_authenticated %}
+                        {%if watchlist%}
+                            <form action="{% url 'watchlist'%}" class="form-group" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="content_id" value="{{content.id}}" />
+                                <input type="hidden" name="func" value="remove" />
+                                <input class="btn btn-primary" type="submit" value="Remove from watchlist">
+                            </form>
+                        {% endif %}
+                    {% endif %}
+                {%else%}
+                    {% if user.is_authenticated %}
+                        {% if content.creator|stringformat:"s" == username %}
+                               <form action="{% url 'close' %}" method="post">
+                                    {% csrf_token %}
+                                    <div>
+                                        <input type="hidden" name="content_id" value="{{content.id}}" />
+                                        {% if content.bidder %}
+                                        <button class="btn-primary" type="submit" value="Close">Close</button>
+                                        {%else%}
+                                        <button class="btn btn-light border" disabled type="submit" value="Close">No bid Yet</button>
+                                        {% endif %}
+                                    </div>
+                                </form> 
+                        {% else %}
+                            <form action="{% url 'bidding' %}" method="post" >
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <input class="form-control" type="number" placeholder="Enter amount" label="Your Bid" name="bidItem">
+                                    <input type="hidden" name="content_id" value="{{content.id}}" />
+                                    <button class="form-control btn-primary"type="submit" value="bidItem">Bid</button>
+                                </div>
+                            </form>
+
+                            <form action="{% url 'commenting' %}" class="form-group" method="POST">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <textarea class="form-control"name="comment" rows="5"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <input type="hidden" name="content_id" value="{{content.id}}" />
+                                    <input class="btn btn-primary form-control" type="submit" value="Add Comment">
+                                </div>
+                            </form>
+                                {%if watchlist%}
+                                    <form action="{% url 'watchlist'%}" class="form-group" method="POST">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="content_id" value="{{content.id}}" />
+                                        <input type="hidden" name="func" value="remove" />
+                                        <input class="btn btn-primary" type="submit" value="Remove from watchlist">
+                                    </form>
+                                {%else%}
+                                    <form action="{% url 'watchlist'%}" class="form-group" method="POST">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="content_id" value="{{content.id}}" />
+                                        <input type="hidden" name="func" value="add" />
+                                        <input class="btn btn-primary" type="submit" value="Add to Watchlist">
+                                    </form>
+                                {%endif%}
+                        {%endif%}
+                    {% endif %}
+                {%endif%}
+                <div style="color: gray;font-style: italic;">
+                    Created: {{content.creationTime}}
+                </div>
+                {% if not user.is_authenticated %}
+                    <div>
+                        Log in to join bidding <a href="{% url 'login' %}">Log In here.</a>
+                    </div>
+                    <div>
+                        Don't have an account? <a href="{% url 'register' %}">Register here.</a>
+                    </div>
+                {%endif%}
+
+
+            </div>
+
+        </div>
+        <div class="col-md-6 border " name="comments">
+            <div name="bidComments" class="row d-flex justify-content-left mt-100 mb-100">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h4 class="card-title border">Latest Comments</h4>
+                        </div>
+                        <div class="comment-widgets">
+                            <!-- Comment Row -->
+                            {%for i in comments%}
+                            <div class="d-flex flex-row comment-row m-t-0 border">
+                                <div class="p-2"><img src="../../static/auctions/index.png" alt="user" width="50"
+                                        class="rounded-circle"></div>
+                                <div class="comment-text w-100">
+                                    <h6 class="font-medium">{{i.creator}}</h6>
+                                    <span class="m-b-15 d-block">{{i.comment}}</span>
+                                    <div class="comment-footer">
+                                        <span class="text-muted float-right">{{i.creationTime}}</span>
+                                    </div>
+                                </div>
+                            </div> <!-- Comment Row -->
+                            {%endfor%}
+                        </div> <!-- Card -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

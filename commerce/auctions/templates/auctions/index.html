@@ -1,0 +1,107 @@
+{% extends "auctions/layout.html" %}
+{% load static %}
+
+{% block body %}
+<div class="container">
+    {%if index%}
+    <h2>Active Listings</h2>
+    {%endif%}
+
+    {%if watchlist%}
+    <h2>Watchlist</h2>
+    {%endif%}
+
+    {%if catalog%}
+    <h2>Categories</h2>
+    <div class="row">
+        {%for i in catalog%}
+        <a href="{% url 'category' i %}">
+            <div class="col border" style="
+            height: 50px;
+            width:200px;">
+                <div style="position: absolute;
+                top: 50%;
+                left:50%;
+                transform: translate(-50%, -50%);
+                ">{{i}}</div>
+            </div>
+        </a>
+        {%endfor%}
+    </div>
+    <br>
+    {%endif%}
+
+    {%for i in auctions%}
+    {%if not i.sold|stringformat:'s' == "True" or watchlist|stringformat:'s' == "True" %}
+    <div class="row border " style="padding: 5px; min-height:250px;">
+        <div class="col-md-4">
+
+            {%if i.sold|stringformat:'s' == "True" %}
+                {%if i.bidder|stringformat:'s' == username %}
+                <a href="product/{{i.id}}"><img href="" src="{{i.imageUrl}}" style="max-width:100%;max-height:100%;  position: relative;
+                    left: 50%;         
+                    top: 50%;         
+                    transform: translate(-50%, -50%);
+                    opacity: 0.5;" /></a>
+                    <div style="position: absolute;
+                    top: 50%;
+                    left: 50%;
+                transform: translate(-50%, -50%) rotate(315deg);
+                    text-shadow : 1px 1px 5px #000000;
+                    font-size: 60px;
+                    color: red;
+                    ">WON
+                    </div>               
+                {%else%}
+                <a href="product/{{i.id}}"><img href="" src="{{i.imageUrl}}" style="max-width:100%;max-height:100%;  position: relative;
+                    left: 50%;         
+                    top: 50%;         
+                    transform: translate(-50%, -50%);
+                    opacity: 0.5;" /></a>
+                    <div style="position: absolute;
+                                    top: 50%;
+                                    left: 50%;
+                                transform: translate(-50%, -50%) rotate(315deg);
+                                    text-shadow : 1px 1px 5px #000000;
+                                    font-size: 60px;
+                                    ">SOLD
+                    </div>
+                {%endif%}
+            {%else%}
+
+            <a href="product/{{i.id}}"><img onerror="this.src='static/auctions/default-placeholder.png'" alt="picture"src="{{i.imageUrl}}" style="max-width:100%;max-height:100%;  position: relative;
+                left: 50%;         
+                top: 50%;         
+                transform: translate(-50%, -50%);
+                padding-right: 10px;
+               " /></a>
+            {%endif%}
+
+        </div>
+        <div class="col-md-8">
+            <div class="row">
+                <a href="product/{{i.id}}">{{i.item}}</a>
+            </div>
+            <div class="row">
+                Price: {{i.price}}$
+            </div>
+
+
+            <div class="row">
+                Dealer : {{i.creator}}
+            </div>
+            <br>
+            <div class="row">
+                {{i.definition}}
+
+            </div><br>
+            <div class="row" style="color:gray;">
+                Created: {{i.creationTime}}
+            </div>
+        </div>
+    </div>
+    <br>
+    {%endif%}
+    {%endfor%}
+</div>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    Error
+{% endblock %}
+
+{% block body %}
+
+
+<div>
+    <div class="alert alert-danger">{{content|safe}}</div>
+    
+    <div>
+        <a href="{% url 'create' %}">Create New Page</a> 
+    </div>
+    <br>
+    <div>
+        <a href="{% url 'index' %}">Home</a>
+    </div>
+</div>
+
+{% endblock %}

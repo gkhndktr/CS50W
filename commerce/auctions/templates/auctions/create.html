@@ -1,0 +1,38 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<div class="container">
+    <h2>Create New Bid</h2>
+
+    {% if message %}
+    <div>{{ message }}</div>
+    {% endif %}
+    <div class="form-group">
+        <form action="{% url 'create' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col">
+                    {{ form.item.label_tag }}
+                    {{ form.item }}
+                    {{ form.price.label_tag }}
+                    {{ form.price }}
+                    {{ form.category.label_tag }}
+                    {{ form.category }}
+                    {{ form.imageUrl.label_tag }}
+                    {{ form.imageUrl }}
+                </div>
+                <div class="col">
+                    {{ form.definition.label_tag }}
+                    {{ form.definition }}
+                </div>
+            </div>
+            <br>
+            <div>
+                <button type="submit" class="form-control btn btn-primary">Submit</button>
+            </div>
+
+        </form>
+        <!-- fields=["item","definition","startingPrice","Price","creator","category","image"] -->
+    </div>
+</div>
+{% endblock %}

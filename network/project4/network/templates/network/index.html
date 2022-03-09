@@ -1,0 +1,34 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block body %}
+
+<div class="container">
+    <h1>ALL POSTS</h1>
+    {% if user.is_authenticated %}
+    <form action= "{% url 'index' %}" id="postForm" class="container form-group" method="POST">
+        <div id="textarea">{{ form }}</div>
+        <button type="submit" class="form-control btn-primary">Post</button>
+    </form>
+    {% endif %}
+    <div id="allPosts">
+        {% if posts %}
+            {% for post in posts %}
+            {% include 'network/posts.html' %}
+            {% endfor %}
+        {%else%}
+        <div>
+            <br>
+            <br>
+            <h4>There is no post yet...</h4>
+        </div>
+        
+        {% endif %}
+    </div>
+    {% include 'network/paginator.html' %}
+</div>
+{% include 'network/modal.html' %}
+{% endblock %}
+{% block script %}
+<script src="{% static 'network/index.js' %}"></script>
+{% endblock %}
